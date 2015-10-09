@@ -24,34 +24,34 @@ show_help () {
 This tool finds updated zonefiles, raises the serial and reloads them. -By default after interactive confirmation.\n
   -h -?         shows this help info.\n
   -b            headless bulk mode - finds multiple zonefiles, updates the serials and reloads them. -also overrides '-f' function\n
-  -x 		    headless single file mode - tries to find the last modified zonefile and perform a reload. -also overrides '-f' function\n
-  -d 		    runs the tool in dev mode - nothing is being modified only print what normally would be done. -this argument should preceed anything else.\n
-  -f		    specify zonefile manually - always use this flag as the last argument."
+  -x 		headless single file mode - tries to find the last modified zonefile and perform a reload. -also overrides '-f' function\n
+  -d 		runs the tool in dev mode - nothing is being modified only print what normally would be done. -this argument should preceed anything else.\n
+  -f		specify zonefile manually - always use this flag as the last argument."
 }
 
 validate_env () {
     if [ ! "$USER" == "$USERID" ]; then
-	    bail_out "Error: You are not user "$USERID", exiting..."
+	bail_out "Error: You are not user "$USERID", exiting..."
     fi
 
     if [ -z auth_check=$(getent passwd "$USERID") ]; then
-	    bail_out "Error: user "$USERID" not in local passwd configuration, exiting..."
+	bail_out "Error: user "$USERID" not in local passwd configuration, exiting..."
     fi
 
     if [ ! "$HOME" == "$SEARCHPATH" ]; then
-	    bail_out "Error: bind environment not ok, exiting..."
+	bail_out "Error: bind environment not ok, exiting..."
     fi
 
     if [ ! -d "$SEARCHPATH" ]; then
-	    bail_out "Error: "$SEARCHPATH" is not a valid directory, exiting..."
+	bail_out "Error: "$SEARCHPATH" is not a valid directory, exiting..."
     fi
 
     if [ ! -r "$LOGFILE" ]; then
-	    bail_out "Error: cannot read "$LOGFILE", exiting..."
+	bail_out "Error: cannot read "$LOGFILE", exiting..."
     fi
 
     if [ -z bind_process=$(pgrep -U bind -x named | tail -1) ]; then
-	    bail_out "Error: named service is not running, exiting..."
+	bail_out "Error: named service is not running, exiting..."
     fi
 }
 
@@ -97,7 +97,7 @@ get_single_serial () {
 	    serial=`grep -Ei ';serial|; serial' "$zonefile" | cut -d ';' -f 1 | tr -d "[:blank:]"`
 	     if [[ -n "$serial" ]]; then
 	        update_serial "$serial" "$zonefile"
-            zone_reload "$zonefile"
+                zone_reload "$zonefile"
 	        reload_mgt_zone='1'
 	    else
 	        echo "Error: No serial found in "$zonefile" exiting..."
@@ -188,14 +188,14 @@ update_serial () {
         raise_serial=`date +%Y%m%d%H -d '+1 days'`
         echo "Warning: serial ends with: "$hour_segment" If the serial is dated at the last day of the month, you have to update it manually" 	
         modify_serial "$1" "$raise_serial" "$2"
-	    updated_serial="$raise_serial"
+	updated_serial="$raise_serial"
     elif [ "$1" -ge "$current_date" ]; then
         raise_serial=$(expr "$1" + 1)
         modify_serial "$1" "$raise_serial" "$2"
-	    updated_serial="$raise_serial"
+	updated_serial="$raise_serial"
     else
         modify_serial "$1" "$current_date" "$2"
-	    updated_serial="$current_date"
+	updated_serial="$current_date"
     fi
 }
 
@@ -213,7 +213,7 @@ reload_mgtzone_check () {
         ZONEFILE="$MGTZONE"
         get_single_serial
         unset ZONEFILE
-	    reload_mgt_zone='0'
+	reload_mgt_zone='0'
     fi
 }
 
@@ -230,11 +230,11 @@ zone_reload () {
 rndc_reload () {
     if [ "$PRDRUN" == '1' ]; then
         rndc reload "$1"
-	    accounting_user "$zonefile" "$1" "$updated_serial" "P="$PRDRUN"_H="$HEADLESS"_B="$BULKMODE"_M="$reload_mgt_zone""
-	    zone_array+=("$origin_directive")
+	accounting_user "$zonefile" "$1" "$updated_serial" "P="$PRDRUN"_H="$HEADLESS"_B="$BULKMODE"_M="$reload_mgt_zone""
+	zone_array+=("$origin_directive")
     else
         echo "We are in test mode, not reloading zone "$1""
-	    zone_array+=("$origin_directive")
+	zone_array+=("$origin_directive")
     fi
 }
 
@@ -267,17 +267,17 @@ while getopts "h?bdxf:" arg; do
         exit 0
         ;;
     b)  BULKMODE='1'
-	    ;;
+	;;
     d) 	PRDRUN='0'
-	    ;;
+	;;
     x) 	###Headless mode###
-	    echo "Trying to find last edited zonefile, updating serial and perform an rndc reload..."
-	    validate_env
-	    get_single_serial "find_zone"
-	    reload_mgtzone_check
-	    check_bind_errors
-	    exit 0
-	    ;;  	
+	echo "Trying to find last edited zonefile, updating serial and perform an rndc reload..."
+	validate_env
+	get_single_serial "find_zone"
+	reload_mgtzone_check
+	check_bind_errors
+	exit 0
+	;;  	
     f)  ZONEFILE="$OPTARG"
         ;;
     esac
