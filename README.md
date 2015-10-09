@@ -1,5 +1,5 @@
 # zoneupdate
-Tool for bind authoritative name servers
+Tool for bind authoritative name servers.
 zoneupdate is a tool written in shell language (bash). 
 It finds updated zonefiles, raises the serial and reloads them. 
 It also checks for errors in the bind application logfile.
