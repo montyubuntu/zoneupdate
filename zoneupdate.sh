@@ -3,7 +3,7 @@
 # 20150131, J. Sikkema, Tool that can mass update zonefiles and reloads them.
 
 SEARCHPATH="/opt/named/db/"   # Named base dir
-MGTZONE="/opt/named/db/PLACE.HOLDER"   # Special zonefile that governs muliple zones. (optional)
+MGTZONE="/opt/named/db/PLACE.HOLDER"   # Special zonefile that governs multiple zones. (optional)
 LOGFILE="/var/log/update.log"   # Bind logfile 
 AUDIT='0'   # Keeps a logfile of all users using this tool. 0=no, 1=yes
 AUDITFILE="/var/log/zoneupdate.log"   # Users logfile if AUDIT was set to '1'.
