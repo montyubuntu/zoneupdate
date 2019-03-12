@@ -1,3 +1,5 @@
+Moved to gitlab: https://gitlab.com/Manjar0/zoneupdate
+
 # zoneupdate
 Tool for bind authoritative name servers.
 zoneupdate is a tool written in shell language (bash). 
